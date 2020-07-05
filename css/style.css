@@ -181,33 +181,33 @@ html {
 }
 
 /* projects styles */
-.projects {
+.projects, .blogs {
   width: 100%;
   min-height: 100vh;
   background: url("../img/cover.jpg") rgba(0,0,0,0.7) center/cover fixed no-repeat;
   background-blend-mode: multiply;
 }
 
-.projects-items-wrapper {
+.projects-items-wrapper, .blogs-items-wrapper {
   margin: 0px auto;
   width: 70vw;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr
 }
 
-.projects-item-wrapper {
+.projects-item-wrapper, .blogs-item-wrapper {
   position: relative;
   padding: 1.5vw;
 }
 
-.project-img-background {
+.project-img-background, .blogs-img-background {
   transition: all 0.7s;
   width: 100%;
   height: 30vh;
   background: center/cover no-repeat;
 }
 
-.project-logo {
+.project-logo, .blogs-logo {
   font-size: 130%;
   color: #8a8a8a;
 }
@@ -230,7 +230,7 @@ html {
   transition: all 0.7s;
 }
 
-.projects-item-wrapper:hover .subtitle {
+.projects-item-wrapper:hover, .blogs-item-wrapper:hover .subtitle {
   color: #6291c5;
 }
 
@@ -239,11 +239,8 @@ html {
   background-blend-mode: multiply;
 }
 
-/* blog styles */
-.blogs {
-  width: 100%;
-  min-height: 100vh;
-  background: url("../img/cover.jpg") rgba(0,0,0,0.7) center/cover fixed no-repeat;
+.blogs-item-wrapper:hover .blogs-img-background {
+  background: rgba(0,0,0,0.7) center/cover no-repeat;
   background-blend-mode: multiply;
 }
 
