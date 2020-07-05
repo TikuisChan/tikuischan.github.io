@@ -180,14 +180,8 @@ html {
   font-weight: 700;
 }
 
-/* projects styles */
-.projects {
-  width: 100%;
-  min-height: 100vh;
-  background: url("../img/cover.jpg") rgba(0,0,0,0.7) center/cover fixed no-repeat;
-  background-blend-mode: multiply;
-}
-
+/* projects and blogs styles */
+.projects,
 .blogs {
   width: 100%;
   min-height: 100vh;
@@ -195,13 +189,7 @@ html {
   background-blend-mode: multiply;
 }
 
-.projects-items-wrapper {
-  margin: 0px auto;
-  width: 70vw;
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr
-}
-
+.projects-items-wrapper,
 .blogs-items-wrapper {
   margin: 0px auto;
   width: 70vw;
@@ -209,23 +197,13 @@ html {
   grid-template-columns: 1fr 1fr 1fr
 }
 
-.projects-item-wrapper {
-  position: relative;
-  padding: 1.5vw;
-}
-
+.projects-item-wrapper,
 .blogs-item-wrapper {
   position: relative;
   padding: 1.5vw;
 }
 
-.project-img-background {
-  transition: all 0.7s;
-  width: 100%;
-  height: 30vh;
-  background: center/cover no-repeat;
-}
-
+.project-img-background,
 .blogs-img-background {
   transition: all 0.7s;
   width: 100%;
@@ -233,9 +211,11 @@ html {
   background: center/cover no-repeat;
 }
 
-.project-logo, .blogs-logo {
+.project-logo a,
+.blogs-logo a {
   font-size: 130%;
   color: #8a8a8a;
+  text-decoration: none;
 }
 
 .img-text-wrapper {
@@ -256,19 +236,12 @@ html {
   transition: all 0.7s;
 }
 
-.projects-item-wrapper:hover .subtitle {
-  color: #6291c5;
-}
-
+.projects-item-wrapper:hover,
 .blogs-item-wrapper:hover .subtitle {
   color: #6291c5;
 }
 
-.projects-item-wrapper:hover .project-img-background {
-  background: rgba(0,0,0,0.7) center/cover no-repeat;
-  background-blend-mode: multiply;
-}
-
+.projects-item-wrapper:hover .project-img-background,
 .blogs-item-wrapper:hover .blogs-img-background {
   background: rgba(0,0,0,0.7) center/cover no-repeat;
   background-blend-mode: multiply;
@@ -319,6 +292,7 @@ html {
   position: relative;
   top: 30vh;
 }
+
 .banner-big {
   color: #533;
   font-size: 200%;
@@ -330,13 +304,8 @@ html {
   font-size: 100%;
   font-weight: 500;
 }
-.projects-items-wrapper {
-  margin: 0px auto;
-  width: 70vw;
-  display: grid;
-  grid-template-columns: 1fr
-}
 
+.projects-items-wrapper,
 .blogs-items-wrapper {
   margin: 0px auto;
   width: 70vw;
@@ -349,19 +318,17 @@ html {
   background-position: var(--mobile-screen-move);
 }
 
-.projects {
-  background: url("../img/cover.jpg") rgba(0,0,0,0.7) cover fixed no-repeat;
-  background-position: var(--mobile-screen-move);
-}
-
+.projects,
 .blogs {
   background: url("../img/cover.jpg") rgba(0,0,0,0.7) cover fixed no-repeat;
   background-position: var(--mobile-screen-move);
 }
 
 /* need JS to do the 'activate depends on scroll condition' */
-.project-logo {
+.project-logo,
+.blogs-logo {
   color: white;
+
 }
 
 .subtitle {
@@ -370,13 +337,7 @@ html {
   font-weight: 700;
 }
 
-.project-img-background {
-  height: 50vh;
-  margin-bottom: 10vh;
-  background: rgba(0,0,0,0.7) center/cover no-repeat;
-  background-blend-mode: multiply;
-}
-
+.project-img-background,
 .blogs-img-background {
   height: 50vh;
   margin-bottom: 10vh;
