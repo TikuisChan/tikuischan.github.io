@@ -1,0 +1,97 @@
+* {
+    border: 0px;
+    margin: 0px;
+    font-family: Asap, sans-serif;
+}
+
+header {
+    text-align: center;
+    background-color: #6b6b6b;
+    color: white;
+    padding: 15px;
+}
+
+.result-board {
+    text-align: center;
+    border: 2px solid black;
+    width: 200px;
+    position: relative;
+    margin: auto;
+    margin-top: 30px;
+    font-size: 60px;
+    font-weight: 700;
+    position: relative;
+}
+
+.player-banner {
+    font-size: 15px;
+    position: absolute;
+    background-color: green;
+    width: 70px;
+    height: 25px;
+    text-align: center;
+    top: 25px;
+}
+
+#player {
+    left: -80px;
+    line-height: 25px;
+    color: white;
+    background-color: green;
+}
+
+#computer {
+    right: -80px;
+    color: white;
+    background-color: red;
+}
+
+.report {
+    padding-top: 30px;
+    color: #3b3b3b;
+    font-size: 40px;
+    text-align: center;
+}
+
+.choices-window {
+    margin: auto;
+    width: 640px;
+    padding: 20px;
+}
+
+#rock,
+#paper,
+#scissors {
+    display: inline-block;
+    border: 3px solid black;
+    border-radius: 50%;
+    width: 200px;
+}
+
+.choices-window img {
+    width: 200px;
+    border-radius: 50%;
+}
+
+.choices-window img:hover {
+    cursor: pointer;
+}
+
+.tailer {
+    text-align: center;
+    font-weight: bold;
+}
+
+.both-select {
+    box-shadow:
+     -5px 0px 15px green,
+     5px 0px 15px red;
+}
+
+.player-select {
+    box-shadow: -5px 0px 15px green
+}
+
+.cpu-select {
+    box-shadow: 5px 0px 15px red;
+ }
