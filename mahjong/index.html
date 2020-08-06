@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MahJong Recorder</title>
+    <meta charset='utf-8'>
+    <meta name="description" content="MahJong Recorder">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <!-- link -->
+    <link rel="stylesheet" href="./style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog==" crossorigin="anonymous" />
+    <script src="./app.js" defer></script>
+</head>
+<body>
+    <header>
+        <h1>麻雀記錄 ver. 1.0</h1>
+    </header>
+    <div class="main">
+        <form class="inputWrapper">
+            <div class="playerName">
+                <p>玩家：</p>
+                <div class="player1">
+                    <label for="player1"><i class="fas fa-cat"></i></label>
+                    <input type="text" name="player1" id="player1">
+                </div>
+                <div class="player2">
+                    <label for="player2"><i class="fas fa-dog"></i></label>
+                    <input type="text" name="player2" id="player2">
+                </div>
+                <div class="player3">
+                    <label for="player3"><i class="fab fa-earlybirds"></i></label>
+                    <input type="text" name="player3" id="player3">
+                </div>
+                <div class="player4">
+                    <label for="player4"><i class="fas fa-meh"></i></label>
+                    <input type="text" name="player4" id="player4">
+                </div>
+                <button class="playerConfirm">Confirm</button>
+            </div>
+            <div class="winner">
+                <p>誰糊了？</p>
+                <div class="winner-choice-wrapper">
+                    <div class="player1-w"><i class="fas fa-cat"></i></div>
+                    <div class="player2-w"><i class="fas fa-dog"></i></div>
+                    <div class="player3-w"><i class="fab fa-earlybirds"></i></div>
+                    <div class="player4-w"><i class="fas fa-meh"></i></div>
+                </div>
+            </div>
+            <div class="loser">
+                <p>誰出沖？</p>
+                <div class="loser-choice-wrapper">
+                    <div class="player1-l"><i class="fas fa-cat"></i></div>
+                    <div class="player2-l"><i class="fas fa-dog"></i></div>
+                    <div class="player3-l"><i class="fab fa-earlybirds"></i></div>
+                    <div class="player4-l"><i class="fas fa-meh"></i></div>
+                    <div class="all-l"><span>自摸</span></div>
+                </div>
+            </div>
+            <div class="moneyDev">
+                $$$$$：
+                <input type="number" class="moneyInput">
+            </div>
+            <div class="button-wrapper">
+                <button class="submit-button" type="submit">Submit</button>
+                <button class="clear-button">Clear All</button>
+            </div>
+        </form>
+        <div class="record-wrapper">
+            <table class="record">
+                <tr class="player-names">
+                    <th>Player1</th>
+                    <th>Player2</th>
+                    <th>Player3</th>
+                    <th>Player4</th>
+                    <th></th>
+                </tr>
+                <tr class='total-points'>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>Total</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

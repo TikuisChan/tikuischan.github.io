@@ -1,0 +1,181 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@500&family=Poppins:wght@400;700&display=swap');
+/*
+font-family: 'Noto Sans TC', sans-serif;
+font-family: 'Poppins', sans-serif;
+*/
+
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: 'Noto Sans TC', sans-serif;
+}
+
+body {
+    background-image: linear-gradient(45deg, #e2c35d, #d88771);
+    min-height: 100vh;
+}
+
+header {
+    font-size: 1.5em;
+    margin: auto;
+    height: 15vh;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.main{
+    display: grid;
+    grid-template-columns: 5% 1fr 1fr 5%;
+}
+
+form {
+    grid-column: 2/3;
+    color: white;
+    font-size: 1.5em;
+}
+
+form input {
+    border: none;
+    height: 4vh;
+    width: 90%;
+    margin: 0px 5%;
+}
+
+.playerName {
+    display: grid;
+    grid-template-rows: 0.5fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+}
+
+.playerName p {
+    grid-row: 1/2;
+    grid-column: 1/2;
+}
+
+.player1 {
+    grid-row: 2/3;
+    grid-column: 1/2;
+}
+
+.player2 {
+    grid-row: 2/3;
+    grid-column: 2/3;
+}
+
+.player3 {
+    grid-row: 2/3;
+    grid-column: 3/4;
+}
+
+.player4 {
+    grid-row: 2/3;
+    grid-column: 4/5;
+}
+
+.playerConfirm {
+    grid-row: 3/4;
+    grid-column: 4/5;
+}
+
+.winner,
+.loser,
+.moneyDev,
+.button-wrapper {
+    display: block;
+    padding: 10px 0px;
+}
+
+.winner-choice-wrapper,
+.loser-choice-wrapper {
+    display: flex;
+    font-size: 2em;
+    width: 90%;
+    justify-content: space-between;
+    margin: auto;
+}
+
+form button {
+    display: inline-block;
+    border: none;
+    background: #d88771;
+    color: white;
+    font-size: 1.2rem;
+    margin-top: 20px;
+    padding: 10px;
+    border-radius: 15px 30px;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+.clear-button {
+    border: solid white 5px;
+    background: transparent;
+    margin-left: 15vw;
+}
+
+form button:hover {
+    background: white;
+    color: #d88771;
+}
+
+.clear-button:hover {
+    color: red;
+}
+
+.selected-w {
+    text-shadow: 5px 5px 10px green;
+}
+
+.selected-l {
+    text-shadow: 5px 5px 10px red;
+}
+
+.record-wrapper {
+    grid-column: 3/4;
+    margin: 0px auto;
+}
+
+.record {
+    width: 40vw;
+    font-size: 1.2em;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.record th {
+    width: 10vw;
+}
+
+.trash-btn {
+    color: white;
+    background: #ff6f47;
+    border: none;
+    padding: 0.5rem;
+    cursor: pointer;
+}
+
+.fa-trash {
+    pointer-events: none;
+}
+
+.player1-w,
+.player2-w,
+.player3-w,
+.player4-w,
+.player1-l,
+.player2-l,
+.player3-l,
+.player4-l,
+.all-l {
+    cursor: pointer;
+}
+
+.total-points {
+    background: rgba(255, 255, 255, 0.2);
+}
