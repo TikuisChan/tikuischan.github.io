@@ -9,15 +9,15 @@ class Sensor {
         this.readings = [];
     }
 
-    update (roadBorders) {
+    update (roadBorders, traffic) {
         this.#castRays();
         this.readings = [];
         this.rays.forEach(ray=>{
-            this.readings.push(this.#getReading(ray, roadBorders));
+            this.readings.push(this.#getReading(ray, roadBorders, traffic));
         });
     }
 
-    #getReading (ray, roadBorders) {
+    #getReading (ray, roadBorders, traffic) {
         let output = null;
         let tMin = 100000;
         for (let i = 0; i < roadBorders.length; i++) {
@@ -27,6 +27,15 @@ class Sensor {
                 output = intercept;
             }
         }
+        traffic.forEach(car => {
+            for (let i = 0; i < car.shape.length; i++) {
+                const intercept = getInterceptPt(ray[0], ray[1], car.shape[i], car.shape[(i+1)%car.shape.length]);
+                if (intercept && intercept.offset < tMin) {
+                    tMin = intercept.offset;
+                    output = intercept;
+                }
+            }
+        });
         return output
     }
 

@@ -8,13 +8,20 @@ function createGame () {
     const road = new Road(myCanvas.width / 2, myCanvas.width * 0.9);
 
     // create car instance
-    const car = new Car(road.getLaneCenter(1), 100, 30, 50);
+    const car = new Car(road.getLaneCenter(1), 100, 30, 50, "KEY");
+
+    // create traffic on the road
+    const traffic = [new Car(road.getLaneCenter(1), -100, 30, 50, "DUMMY")];
 
     // start game
     animate();
 
     function animate () {
-        car.update(road.border);
+        for (let i = 0; i < traffic.length; i++) {
+            traffic[i].update(road.border, []);
+        }
+
+        car.update(road.border, traffic);
         // draw will reset when re-define canvas height
         myCanvas.height = window.innerHeight;
 
@@ -23,6 +30,9 @@ function createGame () {
 
         road.draw(ctx);
         car.draw(ctx);
+        for (let i = 0; i < traffic.length; i++) {
+            traffic[i].draw(ctx);
+        }
 
         ctx.restore();
         requestAnimationFrame(animate);
