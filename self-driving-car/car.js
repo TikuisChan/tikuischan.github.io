@@ -1,5 +1,5 @@
 class Car{
-    constructor(x, y, width, height, controlType) {
+    constructor(x, y, width, height, controlType, sensorRayCount=5) {
         this.x = x;
         this.y = y;
         this.angle = 0;
@@ -19,16 +19,17 @@ class Car{
         this.frictionCoeff = 0.05;
         switch (controlType) {
             case "KEY":
+            case "AI":
                 this.acceleration = 0.2;
                 break;
             case "DUMMY":
-                this.acceleration = (Math.random() + 0.1) * 0.18;
+                this.acceleration = (Math.random() + 0.1) * 0.16;
                 break;
         }
 
         this.type = controlType;
-        this.sensors = new Sensor(this);
-        this.controls = new Controls(controlType);
+        this.sensors = new Sensor(this, sensorRayCount);
+        this.controls = new Controls(controlType, sensorRayCount);
     }
 
     draw (ctx) {
@@ -44,7 +45,7 @@ class Car{
             ctx.lineTo(this.shape[i].x, this.shape[i].y);
         }
         ctx.fill();
-        if (this.type == "KEY") {
+        if (this.type != "DUMMY") {
             this.sensors.draw(ctx);
         }
     }
@@ -104,6 +105,14 @@ class Car{
         this.speed -= this.frictionCoeff * this.speed;
 
         // calculate new pos according to the input
+        if (this.controls.ai) {
+            const control = this.controls.ai.forward(this.sensors.readings.map(x => x == null? 0: x.offset));
+            this.controls.forward = control[0] == 1;
+            this.controls.left = control[1] == 1;
+            this.controls.right = control[2] == 1;
+            this.controls.backward = control[3] == 1;
+        }
+
         if (this.controls.forward) {
             this.speed -= this.acceleration;
         }

@@ -4,6 +4,7 @@ class Controls {
         this.right = false;
         this.left = false;
         this.backward = false;
+        this.ai;
 
         switch (controlType) {
             case "KEY":
@@ -12,6 +13,8 @@ class Controls {
             case "DUMMY":
                 this.forward = true;
                 break;
+            case "AI":
+                this.ai = new FC([5, 6, 4]);
         }
     }
 

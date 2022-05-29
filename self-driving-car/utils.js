@@ -37,3 +37,7 @@ function polyIntersect (poly1, poly2) {
         }
     }
 }
+
+function stepActivate (input) {
+    return input > 0
+}

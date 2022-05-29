@@ -1,14 +1,14 @@
 function createGame () {
     // define canvas
-    const myCanvas = document.getElementById("myCanvas");
-    myCanvas.width = 200;
-    const ctx = myCanvas.getContext("2d");
+    const carCanvas = document.getElementById("carCanvas");
+    carCanvas.width = 200;
+    const carCtx = carCanvas.getContext("2d");
     
     // create road
-    const road = new Road(myCanvas.width / 2, myCanvas.width * 0.9);
+    const road = new Road(carCanvas.width / 2, carCanvas.width * 0.9);
 
     // create car instance
-    const car = new Car(road.getLaneCenter(1), 100, 30, 50, "KEY");
+    const car = new Car(road.getLaneCenter(1), 100, 30, 50, "AI");
 
     // create traffic on the road
     const traffic = [new Car(road.getLaneCenter(1), -100, 30, 50, "DUMMY")];
@@ -23,18 +23,18 @@ function createGame () {
 
         car.update(road.border, traffic);
         // draw will reset when re-define canvas height
-        myCanvas.height = window.innerHeight;
+        carCanvas.height = window.innerHeight;
 
-        ctx.save();
-        ctx.translate(0, -car.y + myCanvas.height * 0.7);
+        carCtx.save();
+        carCtx.translate(0, -car.y + carCanvas.height * 0.7);
 
-        road.draw(ctx);
-        car.draw(ctx);
+        road.draw(carCtx);
+        car.draw(carCtx);
         for (let i = 0; i < traffic.length; i++) {
-            traffic[i].draw(ctx);
+            traffic[i].draw(carCtx);
         }
 
-        ctx.restore();
+        carCtx.restore();
         requestAnimationFrame(animate);
     }
 }
