@@ -8,8 +8,8 @@ class FC {
 
     forward (X) {
         let xOut = [...X];
-        this.model.forEach(x=>{
-            xOut = x.forward(xOut);
+        this.model.forEach(layer => {
+            xOut = layer.forward(xOut);
         })
         return xOut;
     }
@@ -29,6 +29,7 @@ class Layer {
     }
 
     forward (X) {
+        this.X = X;
         let output = [];
         for (let i = 0; i < this.outputSize; i++) {
             const w = this.weight[i];
@@ -39,6 +40,7 @@ class Layer {
             }
             output.push(wx + b);
         }
+        this.output = output.map(x=>this.activate(x));
         return output.map(x=>this.activate(x));
     }
 }
