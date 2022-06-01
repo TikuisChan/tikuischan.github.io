@@ -11,13 +11,24 @@
     <script src="controls.js"></script>
     <script src="sensor.js"></script>
     <script type="text/javascript">
+        function restartGame (play) {
+            game.restartGame(play);
+        }
+
         // same as $('document').ready(function(){});
         document.addEventListener("DOMContentLoaded", function () {
-            createGame();
+            // let requestID = createGame();
+            game = new Game();
+            game.initGame();
+            game.animate();
         });
     </script>
 </head>
 <body>
     <canvas id="carCanvas"></canvas>
+    <div class="verticalBtn">
+        <button id="restart-btn" onclick="javascript: restartGame()">AI</button>
+        <button id="restart-btn" onclick="javascript: restartGame(true)">Play</button>
+    </div>
     <canvas id="nnCanvas"></canvas>
 </body>

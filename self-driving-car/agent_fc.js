@@ -40,7 +40,8 @@ class Layer {
             }
             output.push(wx + b);
         }
-        this.output = output.map(x=>this.activate(x));
+        this.predict = output.map(x=>this.activate(x));
+        this.predict_prob = softMax(output);
         return output.map(x=>this.activate(x));
     }
 }

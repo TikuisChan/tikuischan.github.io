@@ -10,11 +10,13 @@ class Visualizer {
         for (let i = 0; i < network.model.length; i++) {
             let layerTop = network.model.length == 1? 0.5 : (network.model.length - i - 1) / (network.model.length - 1);
             layerTop = top + (height - layerHeight) * layerTop;
-            Visualizer.drawLayer(ctx, network.model[i], left, layerTop, width, layerHeight);
+            const drawInput = i == 0;
+            ctx.setLineDash([7, 3]);
+            Visualizer.drawLayer(ctx, network.model[i], left, layerTop, width, layerHeight, 18, drawInput);
         }
     }
 
-    static drawLayer(ctx, layer, left, top, width, height, nodeRadius=18) {
+    static drawLayer(ctx, layer, left, top, width, height, nodeRadius=18, drawInput=false) {
         const bottom = top + height;
         for (let i = 0; i < layer.inputSize; i++) {
             for (let j = 0; j < layer.outputSize; j++) {
@@ -28,21 +30,23 @@ class Visualizer {
                     top
                 )
                 ctx.lineWidth = 2;
-                ctx.strokeStyle = getRGBA(layer.weight[j][i]);
+                ctx.strokeStyle = getRGBA(layer.predict_prob[i]);
                 ctx.stroke();
             }
         }
-        for (let i = 0; i < layer.inputSize; i++) {
-            let x = layer.inputSize == 1? 0.5: i / (layer.inputSize - 1);
-            x = x * width + left;
-            ctx.beginPath();
-            ctx.arc(x, bottom, nodeRadius, 0, Math.PI *2);
-            ctx.fillStyle = "black";
-            ctx.fill();
-            ctx.beginPath();
-            ctx.arc(x, bottom, nodeRadius * 0.6, 0, Math.PI *2);
-            ctx.fillStyle = getRGBA(layer.X[i]);
-            ctx.fill();
+        if (drawInput) {
+            for (let i = 0; i < layer.inputSize; i++) {
+                let x = layer.inputSize == 1? 0.5: i / (layer.inputSize - 1);
+                x = x * width + left;
+                ctx.beginPath();
+                ctx.arc(x, bottom, nodeRadius, 0, Math.PI *2);
+                ctx.fillStyle = "black";
+                ctx.fill();
+                ctx.beginPath();
+                ctx.arc(x, bottom, nodeRadius * 0.6, 0, Math.PI *2);
+                ctx.fillStyle = getRGBA(layer.X[i]);
+                ctx.fill();
+            }
         }
         for (let i = 0; i < layer.outputSize; i++) {
             let x = layer.outputSize == 1? 0.5: i / (layer.outputSize - 1);
@@ -53,7 +57,7 @@ class Visualizer {
             ctx.fill();            
             ctx.beginPath();
             ctx.arc(x, top, nodeRadius * 0.6, 0, Math.PI *2);
-            ctx.fillStyle = getRGBA(layer.output[i]);
+            ctx.fillStyle = getRGBA(layer.predict[i]);
             ctx.fill();
 
             ctx.beginPath()

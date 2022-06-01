@@ -41,3 +41,13 @@ function polyIntersect (poly1, poly2) {
 function stepActivate (input) {
     return input > 0
 }
+
+function softMax (input) {
+    const s = input.map(x => Math.exp(x));
+    const sum = s.reduce((sum, x)=> sum + x, 0);
+    return s.map(x=> x / sum);
+}
+
+function getRandomInt(max) {
+    return Math.floor(Math.random() * max);
+}

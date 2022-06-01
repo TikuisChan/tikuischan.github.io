@@ -1,46 +1,97 @@
-function createGame () {
-    // define canvas
-    const carCanvas = document.getElementById("carCanvas");
-    carCanvas.width = 200;
-    const carCtx = carCanvas.getContext("2d");
-
-    const nnCanvas = document.getElementById("nnCanvas");
-    nnCanvas.width = 300;
-    const nnCtx = nnCanvas.getContext("2d");
+class Game {
+    constructor (mainCanvasWidth=200, nnCanvasWidth=300) {
+        // define canvas
+        this.mainCanvas = document.getElementById("carCanvas");
+        this.mainCanvas.width = mainCanvasWidth;
+        this.mainCtx = this.mainCanvas.getContext("2d");
     
-    // create road
-    const road = new Road(carCanvas.width / 2, carCanvas.width * 0.9);
+        this.nnCanvas = document.getElementById("nnCanvas");
+        this.nnCanvas.width = nnCanvasWidth;
+        this.nnCtx = this.nnCanvas.getContext("2d");
 
-    // create car instance
-    const car = new Car(road.getLaneCenter(1), 100, 30, 50, "KEY");
+        this.ai = true;
+    }
 
-    // create traffic on the road
-    const traffic = [new Car(road.getLaneCenter(1), -100, 30, 50, "DUMMY")];
+    initGame () {
+        // create road
+        this.road = new Road(carCanvas.width / 2, carCanvas.width * 0.9);
 
-    // start game
-    animate();
+        // create car instance
+        this.cars = []
+        const carInitY = 100;
+        for (let i=0; i<100; i++){
+            this.cars.push(new Car(this.road.getLaneCenter(1), carInitY, 30, 50, "AI"));
+        }
+        if (this.ai == false) {
+            this.cars[0] = new Car(this.road.getLaneCenter(1), carInitY, 30, 50, "KEY");
+        } 
 
-    function animate () {
-        for (let i = 0; i < traffic.length; i++) {
-            traffic[i].update(road.border, []);
+        // create traffic on the road
+        let numTraffic = 8;
+        this.traffic = [];
+        for (let i = 0; i < numTraffic; i++) {
+            let dummyY;
+            if (Math.random() > 0.3) {
+                dummyY = carInitY - (i+1) * 100;
+            } else {
+                dummyY = carInitY - (i+1) * 120;
+            }
+            const lane = getRandomInt(3);
+            this.traffic.push(
+                new Car(this.road.getLaneCenter(lane), dummyY, 30, 50, "DUMMY")
+            );
+        }
+    }
+
+    animate (time) {
+        const n = this.traffic.length;
+
+        // define mainCar to place at the center of the screen 
+        let mainCar;
+        if (this.ai == true) {
+            mainCar = this.cars.find(car => car.y == Math.min(...this.cars.map(car=>car.y)));
+        } else {
+            mainCar = this.cars[0];
         }
 
-        car.update(road.border, traffic);
+        for (let i = 0; i < n; i++) {
+            // discard traffic far behind mainCar
+            if (this.traffic[i].y - mainCar.y > 300) {
+                const lane = getRandomInt(3);
+                const dummyY = mainCar.y - (i+1) * 300;
+                this.traffic[i] = new Car(this.road.getLaneCenter(lane), dummyY, 30, 50, "DUMMY");
+            }
+
+            this.traffic[i].update(this.road.border, []);
+        }
+
+        this.cars.forEach(car => car.update(this.road.border, this.traffic));
         // draw will reset when re-define canvas height
-        carCanvas.height = window.innerHeight;
+        this.mainCanvas.height = window.innerHeight;
         nnCanvas.height = window.innerHeight;
 
-        carCtx.save();
-        carCtx.translate(0, -car.y + carCanvas.height * 0.7);
 
-        road.draw(carCtx);
-        car.draw(carCtx, "blue");
-        for (let i = 0; i < traffic.length; i++) {
-            traffic[i].draw(carCtx, "red");
+        this.mainCtx.save();
+        this.mainCtx.translate(0, -mainCar.y + this.mainCanvas.height * 0.7);
+
+        this.road.draw(this.mainCtx);
+        this.cars.forEach(car => car.draw(this.mainCtx, "lightblue", false));
+        mainCar.draw(this.mainCtx, "blue", true)
+        for (let i = 0; i < this.traffic.length; i++) {
+            this.traffic[i].draw(this.mainCtx, "red");
         }
 
-        carCtx.restore();
-        Visualizer.drawNetwork(nnCtx, car.ai);
-        requestAnimationFrame(animate);
+        this.mainCtx.restore();
+        this.nnCtx.lineDashOffset = -time / 50;
+        Visualizer.drawNetwork(this.nnCtx, mainCar.ai);
+        this.requestID = requestAnimationFrame(time=>this.animate());
+    }
+
+    restartGame (play=false) {
+        cancelAnimationFrame(this.requestID);
+        this.mainCtx.clearRect(0, 0, this.mainCanvas.width, window.innerHeight);
+        this.ai = !play;
+        this.initGame();
+        this.animate();
     }
 }

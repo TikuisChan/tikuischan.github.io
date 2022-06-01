@@ -3,6 +3,14 @@ body{
     background: lightgray;
     overflow: hidden;
     text-align: center;
+    display: flex;
+    align-items: center;
+    align-items: center;
+}
+
+.verticalBtn{
+    display: flex;
+    flex-direction: column;
 }
 
 #carCanvas{

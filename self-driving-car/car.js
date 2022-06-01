@@ -31,9 +31,13 @@ class Car{
         this.type = controlType;
         this.sensors = new Sensor(this, sensorRayCount);
         this.controls = new Controls(controlType, sensorRayCount);
+
+        // this.img = new Image();
+        // this.img.src = "car.png";
     }
 
-    draw (ctx, carColor) {
+    draw (ctx, carColor, drawSensor=false) {
+        // rect as a car
         ctx.fillStyle = carColor;
         if (this.crashed) {
             ctx.fillStyle = "grey";
@@ -45,7 +49,21 @@ class Car{
             ctx.lineTo(this.shape[i].x, this.shape[i].y);
         }
         ctx.fill();
-        if (this.type != "DUMMY") {
+
+        // img as a car
+        // ctx.save();
+        // ctx.translate(this.x, this.y);
+        // ctx.rotate(-this.angle);
+        // ctx.drawImage(
+        //     this.img,
+        //     - this.width / 2,
+        //     - this.height / 2,
+        //     this.width,
+        //     this.height
+        // )
+        // ctx.restore();
+
+        if (this.type != "DUMMY" && drawSensor == true) {
             this.sensors.draw(ctx);
         }
     }
