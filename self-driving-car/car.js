@@ -32,8 +32,18 @@ class Car{
         this.sensors = new Sensor(this, sensorRayCount);
         this.controls = new Controls(controlType, sensorRayCount);
 
+        this.score = 0;
         // this.img = new Image();
         // this.img.src = "car.png";
+    }
+
+    resetPos (x, resetScore=false) {
+        this.x = x;
+        this.y = 0;
+        this.angle = 0;
+        this.speed = 0;
+        this.crashed = false;
+        this.score = resetScore?0:this.score;
     }
 
     draw (ctx, carColor, drawSensor=false) {

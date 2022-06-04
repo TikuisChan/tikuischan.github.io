@@ -20,3 +20,8 @@ body{
 #nnCanvas{
     background: black;
 }
+
+#evo-chart {
+    width: 500;
+    height: 300;
+}

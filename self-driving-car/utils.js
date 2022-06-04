@@ -38,14 +38,26 @@ function polyIntersect (poly1, poly2) {
     }
 }
 
-function stepActivate (input) {
+function step (input) {
     return input > 0
 }
 
-function softMax (input) {
-    const s = input.map(x => Math.exp(x));
+function softMax (X) {
+    const s = X.map(x => Math.exp(x));
     const sum = s.reduce((sum, x)=> sum + x, 0);
     return s.map(x=> x / sum);
+}
+
+function tanh (X) {
+    return X.map(x=>Math.tanh(x));
+}
+
+function sigmoid (X) {
+    return X.map(x=> 1 / (1 + Math.exp(x)));
+}
+
+function relu (X) {
+    return X.map(x=>x>0?x:0);
 }
 
 function getRandomInt(max) {
