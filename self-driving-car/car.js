@@ -9,7 +9,7 @@ class Car{
         this.height = height;
         
         this.crashed = false;
-        this.ai = new FC([5, 6, 4]);
+        this.ai = new FC([6, 8, 4]);
         /* 
         instead of setting a constant friction and max speed in the tutorial, 
         a friction coefficient is used, now the frictional acceleration (force) 
@@ -133,12 +133,14 @@ class Car{
         this.speed -= this.frictionCoeff * this.speed;
 
         // calculate new pos according to the input
-        const control = this.ai.forward(this.sensors.readings.map(x => x == null? 0: 1 - x.offset));
+        let X = this.sensors.readings.map(x => x == null? 0: 1 - x.offset);
+        X.push(this.speed);
+        const control = this.ai.forward(X);
         if (this.type == "AI") {
-            this.controls.forward = control[0] == 1;
-            this.controls.left = control[1] == 1;
-            this.controls.right = control[2] == 1;
-            this.controls.backward = control[3] == 1;
+            this.controls.forward = control[0] >= 0.5;
+            this.controls.left = control[1] >= 0.5;
+            this.controls.right = control[2] >= 0.5;
+            this.controls.backward = control[3] >= 0.5;
         }
 
         if (this.controls.forward) {

@@ -20,12 +20,30 @@
             }
         }
 
+        function linearFunc (X) {
+            return X[0] > X[1] ? 1 : 0
+        }
+
         // same as $('document').ready(function(){});
         document.addEventListener("DOMContentLoaded", function () {
-            // let requestID = createGame();
             game = new Game();
             game.initGame();
-            game.evolution();
+            // game.evolution();
+
+            let data = [
+                [1, 2],
+                [2, -3],
+                [3, 2],
+                [4, 3],
+                [5, 5],
+                [6, 6],
+                [-1, 0],
+                [-2, -3],
+                [-3, -2],
+                [-3, 1],
+                [1, 6],
+                [2, 0],
+            ]
         });
     </script>
 </head>

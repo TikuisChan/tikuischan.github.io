@@ -65,8 +65,8 @@ class Game {
         this.road = new Road(carCanvas.width / 2, carCanvas.width * 0.9);
 
         // create traffic on the road
-        let numTraffic = 8;
-        this.traffic = [];
+        let numTraffic = 7;
+        this.traffic = [new Car(this.road.getLaneCenter(1), -350, 30, 50, "DUMMY")];
         for (let i = 0; i < numTraffic; i++) {
             let dummyY;
             if (Math.random() > 0.3) {
@@ -161,14 +161,13 @@ class Game {
                 this.cars.forEach(car => {
                     car.score += this.getScore(car, time - startTime);
                     if (!car.crashed) {
-                        car.score += 2;
+                        car.score += 5;
                     }
                 });
 
                 cancelAnimationFrame(this.requestID);
                 this.mainCtx.clearRect(0, 0, this.mainCanvas.width, window.innerHeight);
                 this.initGame();
-                console.log(this.numTestRound);
                 if (this.numTestRound == 0) {
                     this.survivors = this.cars.sort(function (a, b) {
                         return a.score - b.score;
