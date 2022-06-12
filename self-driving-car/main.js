@@ -48,24 +48,19 @@ class Game {
             }
         };
 
-        this.evoChart = new Chart(
-            this.chartCanvas,
-            this.config,
-        );
-
         this.ai = true;
-        this.generation = 0;
+        this.generation = 1;
         this.numTestRound = 5;
 
+        this.playMode = "record";
         this.start;
     }
 
-    initGame () {
+    initGame (numTraffic=7) {
         // create road
         this.road = new Road(carCanvas.width / 2, carCanvas.width * 0.9);
 
         // create traffic on the road
-        let numTraffic = 7;
         this.traffic = [new Car(this.road.getLaneCenter(1), -350, 30, 50, "DUMMY")];
         for (let i = 0; i < numTraffic; i++) {
             let dummyY;
@@ -78,6 +73,13 @@ class Game {
             this.traffic.push(
                 new Car(this.road.getLaneCenter(lane), dummyY, 30, 50, "DUMMY")
             );
+        }
+    }
+
+    initCars () {
+        this.cars= [];
+        for (let i=0; i<500; i++){
+            this.cars.push(new Car(this.road.getLaneCenter(1), 0, 30, 50, "AI"));
         }
     }
 
@@ -103,7 +105,12 @@ class Game {
         }
 
         this.cars.forEach(car => {
-            car.update(this.road.border, this.traffic);
+            car.update(this.road.border, this.traffic, true);
+            // if (this.record == true && Math.random() > 0.8) {
+            //     car.update(this.road.border, this.traffic, true);
+            // } else {
+            //     car.update(this.road.border, this.traffic);
+            // }
         });
 
         // draw will reset when re-define canvas height
@@ -121,14 +128,32 @@ class Game {
         }
 
         this.mainCtx.restore();
-        this.nnCtx.lineDashOffset = -time/ 50;
+
+        // add record sign
+        if (this.record) {
+            const recordSign = '\u2B24 REC';
+            this.mainCtx.textAlign = "center";
+            this.mainCtx.textBaseline = "middle";
+            this.mainCtx.fillStyle = "red";
+            this.mainCtx.font = 14 + "px Arial";
+            this.mainCtx.beginPath();
+            this.mainCtx.fillText(recordSign, this.mainCanvas.width * 0.83, this.mainCanvas.height * 0.95);
+        }
+
+        this.nnCtx.lineDashOffset = - time / 50;
         Visualizer.drawNetwork(this.nnCtx, mainCar.ai);
         this.requestID = requestAnimationFrame(this.start.bind(this));
     }
 
+    // train nn by genetic algrothm
     evolution (testComplete=false) {
-        // create car instance
+        /*    create car instance
+        1. 1st gen no survivors => create all ai cars
+        2. steps between gens => no change, reset car pos only
+        3. not 1st gen with surviors => create ai cars base on surviors
+        */
         if (this.survivors) {
+            // TODO: separate to a evolve method
             this.cars = []
             this.survivors.forEach(survivor => {
                 survivor.resetPos(this.road.getLaneCenter(1), true);
@@ -140,24 +165,22 @@ class Game {
                     this.cars.push(child);
                 }
             })
-        } else if (testComplete) {
-            this.cars.forEach( car => {
+        } else if (testComplete == false) {
+            this.cars.forEach(car=>{
                 car.resetPos(this.road.getLaneCenter(1), false);
-            })
+            });
         } else {
-            this.cars= [];
-            for (let i=0; i<500; i++){
-                this.cars.push(new Car(this.road.getLaneCenter(1), 0, 30, 50, "AI"));
-            }
+            this.initCars();
         }
+
         let startTime;
         this.start = (time) => {
             if (!startTime) {
                 startTime = time;
             }
 
-            // get top 5 score cars every ~10s and restart game
-            if (time - startTime >= 5000) {
+            // get top 5 score cars every 5000 ms and restart game
+            if (time - startTime >= 5000 + Math.floor(this.generation/10) * 1000 ) {
                 this.cars.forEach(car => {
                     car.score += this.getScore(car, time - startTime);
                     if (!car.crashed) {
@@ -198,25 +221,36 @@ class Game {
         this.start();
     }
 
-    play () {
-        this.start = this.animate;
-        // create car instance
-        this.cars = []
-        for (let i=0; i<100; i++){
-            this.cars.push(new Car(this.road.getLaneCenter(1), 0, 30, 50, "AI"));
+    // manual play
+    play (record=false) {
+        if (this.requestID) {
+            cancelAnimationFrame(this.requestID);
+            this.mainCtx.clearRect(0, 0, this.mainCanvas.width, window.innerHeight);
         }
-        if (this.ai == false) {
-            this.cars[0] = new Car(this.road.getLaneCenter(1), 0, 30, 50, "KEY");
-        } 
-        this.start();
-    }
+        this.record = record;
 
-    restartGame (play=false) {
-        cancelAnimationFrame(this.requestID);
-        this.mainCtx.clearRect(0, 0, this.mainCanvas.width, window.innerHeight);
-        this.ai = !play;
-        this.initGame();
-        this.play();
+        let numTraffic = 7;
+        if (record) {
+            // increase traffic to tragger more different data;
+            numTraffic = 12;
+        }
+        this.initGame(numTraffic);
+        this.ai = false;
+        this.start = this.animate;
+        this.cars = [new Car(this.road.getLaneCenter(1), 0, 30, 50, "KEY", 5)];
+
+        // add ai cars
+        const trainedAi = window.localStorage.getItem('myStyle');
+        if (!record && trainedAi) {
+            let mySytle = new Car(this.road.getLaneCenter(1), 0, 30, 50, "AI");
+            mySytle.ai = new FC(JSON.parse(trainedAi));
+            this.cars.push(mySytle);
+
+            // for (let i=0; i<100; i++){
+            //     this.cars.push(new Car(this.road.getLaneCenter(1), 0, 30, 50, "AI"));
+            // }
+        }
+        this.start();
     }
 
     getScore (car, time) {

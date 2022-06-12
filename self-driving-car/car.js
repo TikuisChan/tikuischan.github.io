@@ -8,8 +8,10 @@ class Car{
         this.width = width;
         this.height = height;
         
+        this.carCam = [];
+
         this.crashed = false;
-        this.ai = new FC([6, 8, 4]);
+        this.ai = new FC([7, 8, 8, 4]);
         /* 
         instead of setting a constant friction and max speed in the tutorial, 
         a friction coefficient is used, now the frictional acceleration (force) 
@@ -33,8 +35,8 @@ class Car{
         this.controls = new Controls(controlType, sensorRayCount);
 
         this.score = 0;
-        // this.img = new Image();
-        // this.img.src = "car.png";
+        this.maxSpeed = this.acceleration / this.frictionCoeff;
+        
     }
 
     resetPos (x, resetScore=false) {
@@ -44,6 +46,7 @@ class Car{
         this.speed = 0;
         this.crashed = false;
         this.score = resetScore?0:this.score;
+        this.carCam = [];
     }
 
     draw (ctx, carColor, drawSensor=false) {
@@ -78,9 +81,9 @@ class Car{
         }
     }
 
-    update (roadBorders, traffic) {
+    update (roadBorders, traffic, record=false) {
         if (!this.crashed) {
-            this.#move();
+            this.#move(record);
             this.shape = this.#createShape();
             this.crashed = this.#checkCollision(roadBorders, traffic);
         }
@@ -129,18 +132,35 @@ class Car{
         return corners
     }
 
-    #move () {
+    #move (record) {
         this.speed -= this.frictionCoeff * this.speed;
 
         // calculate new pos according to the input
         let X = this.sensors.readings.map(x => x == null? 0: 1 - x.offset);
-        X.push(this.speed);
-        const control = this.ai.forward(X);
+        X.push(this.speed / this.maxSpeed);
+        X.push((this.angle % (2 * Math.PI)) / Math.PI);
+
+        // record the input data into "carCam"
+        if (record == true && !this.crashed) {
+            if (this.controls.left | this.controls.right | !this.controls.forward) {
+                this.carCam.push([
+                    X, 
+                    [this.controls.forward, this.controls.left, this.controls.right, this.controls.backward]
+                ]);
+            } else if (Math.random() > 0.9) {
+                this.carCam.push([
+                    X, 
+                    [this.controls.forward, this.controls.left, this.controls.right, this.controls.backward]
+                ]);
+            }
+        }
+
+        const control = this.ai.predict(X);
         if (this.type == "AI") {
-            this.controls.forward = control[0] >= 0.5;
-            this.controls.left = control[1] >= 0.5;
-            this.controls.right = control[2] >= 0.5;
-            this.controls.backward = control[3] >= 0.5;
+            this.controls.forward = control[0];
+            this.controls.left = control[1];
+            this.controls.right = control[2];
+            this.controls.backward = control[3];
         }
 
         if (this.controls.forward) {

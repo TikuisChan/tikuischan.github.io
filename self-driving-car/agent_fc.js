@@ -11,10 +11,10 @@ class FC {
             const lastLayer = new Layer(structure[structure.length - 2], structure[structure.length - 1], "sigmoid");
             lastLayer.initLayer();
             this.model.push(lastLayer);
-        } else if (structure instanceof FC) {
+        } else if (structure instanceof Object & structure.model instanceof Array) {
             // copy existing model
             structure.model.forEach(layer=>{
-                const newLayer = new Layer(layer.inputSize, layer.outputSize, layer.activate);
+                const newLayer = new Layer(layer.inputSize, layer.outputSize, layer.activate_type);
                 for (let i = 0; i < layer.weight.length; i++) {
                     newLayer.bias[i] = layer.bias[i];
                     for (let j = 0; j < newLayer.weight[i].length; j++) {
@@ -37,7 +37,12 @@ class FC {
         return xOut;
     }
 
-    mutate (rate=0.1) {
+    predict (X) {
+        const prob = this.forward(X);
+        return prob.map(p => p > 0.5);
+    }
+
+    mutate (rate=0.05) {
         this.model.forEach(layer => {
             for (let i = 0; i < layer.weight.length; i++) {
                 if (Math.random() <= rate) {
@@ -73,7 +78,7 @@ class Layer {
     activate: activation function
     A: activate(W*X + b)
     */
-    constructor (inputSize, outputSize, activate="step") {
+    constructor (inputSize, outputSize, activate="sigmoid") {
         this.inputSize = inputSize;
         this.outputSize = outputSize;
         this.activate_type = activate;

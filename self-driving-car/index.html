@@ -12,11 +12,66 @@
     <script src="sensor.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script type="text/javascript">
+        function trainMyStyle () {
+            cancelAnimationFrame(game.requestID);
+            // console.table(game.cars[0].carCam);
+            // window.localStorage.setItem('playRecord1', game.cars[0].carCam);
+            let myStyle = new FC([7, 8, 8, 4]);
+            const allData = game.cars[0].carCam;
+            let testData = [];
+            let trainData = [];
+            console.log('Total number of data:', allData.length);
+            for (let i = 0; i < allData.length; i++) {
+                if (Math.random() > 0.2) {
+                    trainData.push(allData[i]);
+                } else {
+                    testData.push(allData[i]);
+                }
+            }
+            
+            console.log('Training data:', trainData.length);
+            console.log('Testing data:', testData.length);
+            for (let epoch=1; epoch < 20; epoch++) {
+                trainData.forEach(data => {
+                    myStyle.fit(data[0], data[1].map(y=>y * 1));
+                });
+                let testLoss = 0;
+                trainData.forEach(data => {
+                    let pred = myStyle.forward(data[0], data[1].map(y=>y * 1));
+                    for (let j = 0; j < pred.length; j++) {
+                        testLoss += (data[1][j] - pred[j]) ** 2;
+                    }
+                });
+                console.log('Epoch:', epoch, 'Loss:', testLoss);
+            }
+            // store to local storage
+            if (window.localStorage.getItem('myStyle')) {
+                localStorage.removeItem('myStyle');
+            }
+            window.localStorage.setItem('myStyle', JSON.stringify(myStyle));
+        }
+
+
         function restartGame (play) {
-            if (play) {
-                game.restartGame(play);
-            } else {
-                game.evolution();
+            // clear all chart
+            Chart.helpers.each(Chart.instances, function (instance) {
+                instance.destroy();
+            }); 
+            switch (play) {
+                case "play":
+                    game.play(false);
+                    break;
+                
+                case "evolution":
+                    game.evoChart = new Chart(
+                        game.chartCanvas,
+                        game.config,
+                    );
+                    game.evolution(true);
+                    break;
+
+                case "REC":
+                    game.play(true);
             }
         }
 
@@ -29,29 +84,16 @@
             game = new Game();
             game.initGame();
             // game.evolution();
-
-            let data = [
-                [1, 2],
-                [2, -3],
-                [3, 2],
-                [4, 3],
-                [5, 5],
-                [6, 6],
-                [-1, 0],
-                [-2, -3],
-                [-3, -2],
-                [-3, 1],
-                [1, 6],
-                [2, 0],
-            ]
         });
     </script>
 </head>
 <body>
     <canvas id="carCanvas"></canvas>
     <div class="verticalBtn">
-        <button id="restart-btn" onclick="javascript: restartGame()">Start Evolution</button>
-        <button id="restart-btn" onclick="javascript: restartGame(true)">Play</button>
+        <button id="restart-btn" onclick="javascript: restartGame('evolution')">Start Evolution</button>
+        <button id="restart-btn" onclick="javascript: restartGame('play')">Play</button>
+        <button id="restart-btn" onclick="javascript: restartGame('REC')">REC Play</button>
+        <button id="restart-btn" onclick="javascript: trainMyStyle()">Train My Style</button>
     </div>
     <canvas id="nnCanvas"></canvas>
     <div id="evo-chart">

@@ -12,11 +12,13 @@ class Visualizer {
             layerTop = top + (height - layerHeight) * layerTop;
             const drawInput = i == 0;
             ctx.setLineDash([7, 3]);
-            Visualizer.drawLayer(ctx, network.model[i], left, layerTop, width, layerHeight, 18, drawInput);
+            // arrows showing the input direction [up, left, right, down]
+            const outputLabel = i == network.model.length - 1 ? [`\u25B2`, `\u25C0`, `\u25B6`, `\u25BC`] : [];
+            Visualizer.drawLayer(ctx, network.model[i], left, layerTop, width, layerHeight, 18, drawInput, outputLabel);
         }
     }
 
-    static drawLayer(ctx, layer, left, top, width, height, nodeRadius=18, drawInput=false) {
+    static drawLayer(ctx, layer, left, top, width, height, nodeRadius=18, drawInput=false, outputLabel=[]) {
         const bottom = top + height;
         for (let i = 0; i < layer.inputSize; i++) {
             for (let j = 0; j < layer.outputSize; j++) {
@@ -33,6 +35,7 @@ class Visualizer {
                 ctx.strokeStyle = getRGBA(layer.predict_prob[i]);
                 ctx.stroke();
             }
+
         }
         if (drawInput) {
             for (let i = 0; i < layer.inputSize; i++) {
@@ -67,6 +70,35 @@ class Visualizer {
             ctx.setLineDash([3, 3]);
             ctx.stroke();
             ctx.setLineDash([]);
+
+            if (outputLabel[i]) {
+                ctx.beginPath();
+                ctx.textAlign = "center";
+                ctx.textBaseline = "middle";
+                ctx.fillStyle = "black";
+                ctx.strokeStyle = "white";
+                ctx.font = nodeRadius * 0.9 + "px Arial";
+                let textX = x;
+                let textCenter = top;
+                switch (i) {
+                    case 0:
+                        break;
+                    case 3:
+                        textCenter += nodeRadius * 0.1;
+                        break;
+                    case 1:
+                        textX -= nodeRadius * 0.07;
+                        textCenter += nodeRadius * 0.08;
+                        break;
+                    case 2:
+                        textX += nodeRadius * 0.07;
+                        textCenter += nodeRadius * 0.08;
+                        break;
+                }
+                ctx.fillText(outputLabel[i], textX, textCenter);
+                ctx.lineWidth = 0.5;
+                ctx.strokeText(outputLabel[i], textX, textCenter);
+            }
         }        
     }
 }
