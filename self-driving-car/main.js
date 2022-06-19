@@ -50,7 +50,7 @@ class Game {
 
         this.ai = true;
         this.generation = 0;
-        this.NUM_TEST_ROUND = 1;
+        this.NUM_TEST_ROUND = 0;
         this.numTestRound = this.NUM_TEST_ROUND;
 
         this.playMode = "record";
@@ -190,7 +190,7 @@ class Game {
             }
 
             // get top 5 score cars every 5000 ms and restart game
-            if (time - startTime >= 5000 + Math.floor(this.generation/5) * 1000 ) {
+            if (time - startTime >= 5000 + Math.floor(this.generation/3) * 1000 ) {
                 this.cars.forEach(car => {
                     car.score += this.getScore(car, time - startTime);
                     if (!car.crashed) {
