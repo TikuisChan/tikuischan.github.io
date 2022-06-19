@@ -46,11 +46,11 @@ class FC {
         this.model.forEach(layer => {
             for (let i = 0; i < layer.weight.length; i++) {
                 if (Math.random() <= rate) {
-                    layer.bias[i] = Math.random() * 2 - 1;
+                    layer.bias[i] = Math.random() - 0.5;
                 }
                 for (let j = 0; j < layer.weight[i].length; j++) {
                     if (Math.random() <= rate) {
-                        layer.weight[i][j] = Math.random() * 2 - 1;
+                        layer.weight[i][j] = Math.random() - 0.5;
                     }
                 }
             }
@@ -60,7 +60,8 @@ class FC {
     fit (X, Y) {
         let dH = this.forward(X);
         for (let i = 0; i < dH.length; i++) {
-            dH[i] = Y[i] - dH[i];
+            // dH[i] = Y[i] - dH[i];
+            dH[i] = Y[i] * Math.log(dH[i]) + (1 - Y[i]) * Math.log(1 - dH[i]);    // cross entropy
         }
         for (let i = 0; i < this.model.length; i++) {
             dH = this.model[this.model.length - 1 - i].backward(dH);
@@ -145,10 +146,10 @@ class Layer {
             case "sigmoid":
                 dA = this.dSigmoid;
                 break;
-                case "relu":
-                    dA = this.dRelu;
-                    break;
-                }
+            case "relu":
+                dA = this.dRelu;
+                break;
+        }
                 
         let delta = [];
         for (let i = 0; i < dH.length; i++) {

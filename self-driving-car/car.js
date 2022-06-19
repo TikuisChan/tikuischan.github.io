@@ -11,7 +11,7 @@ class Car{
         this.carCam = [];
 
         this.crashed = false;
-        this.ai = new FC([7, 8, 8, 4]);
+        this.ai = new FC([7, 12, 12, 4]);
         /* 
         instead of setting a constant friction and max speed in the tutorial, 
         a friction coefficient is used, now the frictional acceleration (force) 
@@ -26,7 +26,8 @@ class Car{
                 this.acceleration = 0.2;
                 break;
             case "DUMMY":
-                this.acceleration = (Math.random() + 0.1) * 0.16;
+                this.acceleration = 0.1;
+                // this.acceleration = (Math.random() + 0.1) * 0.16;
                 break;
         }
 

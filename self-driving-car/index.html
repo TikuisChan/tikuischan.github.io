@@ -11,12 +11,13 @@
     <script src="controls.js"></script>
     <script src="sensor.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.0.0/dist/tf.min.js"></script>
     <script type="text/javascript">
         function trainMyStyle () {
             cancelAnimationFrame(game.requestID);
             // console.table(game.cars[0].carCam);
             // window.localStorage.setItem('playRecord1', game.cars[0].carCam);
-            let myStyle = new FC([7, 8, 8, 4]);
+            let myStyle = new FC([7, 12, 12, 4]);
             const allData = game.cars[0].carCam;
             let testData = [];
             let trainData = [];

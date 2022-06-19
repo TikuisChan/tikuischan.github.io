@@ -1,5 +1,5 @@
 class Game {
-    constructor (mainCanvasWidth=200, nnCanvasWidth=300) {
+    constructor (mainCanvasWidth=200, nnCanvasWidth=400) {
         // define canvas
         this.mainCanvas = document.getElementById("carCanvas");
         this.mainCanvas.width = mainCanvasWidth;
@@ -49,8 +49,9 @@ class Game {
         };
 
         this.ai = true;
-        this.generation = 1;
-        this.numTestRound = 5;
+        this.generation = 0;
+        this.NUM_TEST_ROUND = 1;
+        this.numTestRound = this.NUM_TEST_ROUND;
 
         this.playMode = "record";
         this.start;
@@ -61,19 +62,33 @@ class Game {
         this.road = new Road(carCanvas.width / 2, carCanvas.width * 0.9);
 
         // create traffic on the road
-        this.traffic = [new Car(this.road.getLaneCenter(1), -350, 30, 50, "DUMMY")];
-        for (let i = 0; i < numTraffic; i++) {
-            let dummyY;
-            if (Math.random() > 0.3) {
-                dummyY = - (i+1) * 200;
-            } else {
-                dummyY = - (i+1) * 240;
-            }
-            const lane = getRandomInt(3);
-            this.traffic.push(
-                new Car(this.road.getLaneCenter(lane), dummyY, 30, 50, "DUMMY")
-            );
-        }
+        // 1. by random[very hard, very generalize, final goal]
+        // this.traffic = [new Car(this.road.getLaneCenter(1), -350, 30, 50, "DUMMY")];
+        // for (let i = 0; i < numTraffic; i++) {
+        //     let dummyY;
+        //     if (Math.random() > 0.3) {
+        //         dummyY = - (i+1) * 200;
+        //     } else {
+        //         dummyY = - (i+1) * 240;
+        //     }
+        //     const lane = getRandomInt(3);
+        //     this.traffic.push(
+        //         new Car(this.road.getLaneCenter(lane), dummyY, 30, 50, "DUMMY")
+        //     );
+        // }
+
+        // 2. Three layers of cars, fixed pattern [easiest, easily overfit and remember the pattern]
+        // 1st layer: 1 car at the middle
+        this.traffic = [new Car(this.road.getLaneCenter(1), -200, 30, 50, "DUMMY")];
+        // 2nd layer: hole at the middle
+        this.traffic.push(new Car(this.road.getLaneCenter(0), -400, 30, 50, "DUMMY"));
+        this.traffic.push(new Car(this.road.getLaneCenter(2), -400, 30, 50, "DUMMY"));
+        // 3rd layer: hole at the right
+        this.traffic.push(new Car(this.road.getLaneCenter(0), -600, 30, 50, "DUMMY"));
+        this.traffic.push(new Car(this.road.getLaneCenter(1), -600, 30, 50, "DUMMY"));
+        // 4rd layer: hole at the left
+        this.traffic.push(new Car(this.road.getLaneCenter(2), -800, 30, 50, "DUMMY"));
+        this.traffic.push(new Car(this.road.getLaneCenter(1), -800, 30, 50, "DUMMY"));
     }
 
     initCars () {
@@ -96,21 +111,16 @@ class Game {
         
         for (let i = 0; i < n; i++) {
             // discard traffic far behind mainCar
-            if (this.traffic[i].y - mainCar.y > 200) {
-                const lane = getRandomInt(3);
-                const dummyY = mainCar.y - (i+1) * 300;
-                this.traffic[i] = new Car(this.road.getLaneCenter(lane), dummyY, 30, 50, "DUMMY");
-            }
+            // if (this.traffic[i].y - mainCar.y > 200) {
+            //     const lane = getRandomInt(3);
+            //     const dummyY = mainCar.y - (i+1) * 300;
+            //     this.traffic[i] = new Car(this.road.getLaneCenter(lane), dummyY, 30, 50, "DUMMY");
+            // }
             this.traffic[i].update(this.road.border, []);
         }
 
         this.cars.forEach(car => {
             car.update(this.road.border, this.traffic, true);
-            // if (this.record == true && Math.random() > 0.8) {
-            //     car.update(this.road.border, this.traffic, true);
-            // } else {
-            //     car.update(this.road.border, this.traffic);
-            // }
         });
 
         // draw will reset when re-define canvas height
@@ -180,7 +190,7 @@ class Game {
             }
 
             // get top 5 score cars every 5000 ms and restart game
-            if (time - startTime >= 5000 + Math.floor(this.generation/10) * 1000 ) {
+            if (time - startTime >= 5000 + Math.floor(this.generation/5) * 1000 ) {
                 this.cars.forEach(car => {
                     car.score += this.getScore(car, time - startTime);
                     if (!car.crashed) {
@@ -207,7 +217,7 @@ class Game {
     
                     this.evoChart.update();
                     testComplete = true;
-                    this.numTestRound = 5;
+                    this.numTestRound = this.NUM_TEST_ROUND;
                 } else {
                     this.numTestRound--;
                 }
