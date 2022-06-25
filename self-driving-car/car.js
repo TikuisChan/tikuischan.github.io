@@ -1,5 +1,5 @@
 class Car{
-    constructor(x, y, width, height, controlType, sensorRayCount=5) {
+    constructor(x, y, width, height, controlType, sensorRayCount=5, hiddenLayer) {
         this.x = x;
         this.y = y;
         this.angle = 0;
@@ -11,7 +11,20 @@ class Car{
         this.carCam = [];
 
         this.crashed = false;
-        this.ai = new FC([7, 12, 12, 4]);
+
+        let nnStructure = [sensorRayCount+2];
+        if (hiddenLayer) {
+            hiddenLayer.forEach(x => {
+                nnStructure.push(x);
+            })
+            nnStructure.push(4);
+        } else {
+            nnStructure.push(8);
+            nnStructure.push(8);
+            nnStructure.push(4);
+        }
+        this.ai = new FC(nnStructure);
+
         /* 
         instead of setting a constant friction and max speed in the tutorial, 
         a friction coefficient is used, now the frictional acceleration (force) 

@@ -13,6 +13,22 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.0.0/dist/tf.min.js"></script>
     <script type="text/javascript">
+        /* TODO:
+        > UI
+            1. evolution options
+                - num layer
+                - num neurons in each layer
+                - mutation -> mutation rate
+                - crossover
+                - selection method -> top 5
+            2. std of avg score
+            3. score distribution of each gen
+
+        > code
+            4. refactor nn
+            5. save & load nn
+        */
+
         function trainMyStyle () {
             cancelAnimationFrame(game.requestID);
             // console.table(game.cars[0].carCam);
@@ -52,7 +68,6 @@
             window.localStorage.setItem('myStyle', JSON.stringify(myStyle));
         }
 
-
         function restartGame (play) {
             // clear all chart
             Chart.helpers.each(Chart.instances, function (instance) {
@@ -60,14 +75,18 @@
             }); 
             switch (play) {
                 case "play":
+                    updateAi();
                     game.play(false);
                     break;
                 
                 case "evolution":
+                    game = new Game();
+                    updateAi();
                     game.evoChart = new Chart(
                         game.chartCanvas,
                         game.config,
                     );
+                    game.initGame();
                     game.evolution(true);
                     break;
 
@@ -80,24 +99,90 @@
             return X[0] > X[1] ? 1 : 0
         }
 
+        function updateAi () {
+            const n_rays = document.getElementById('n_rays');
+            const n_layers = document.getElementById('n_layers');
+            const n_neurons = document.getElementById('n_neurons');
+            const numNeuron = parseInt(n_neurons.value);
+            const numLayer = parseInt(n_layers.value);
+            const numRay = parseInt(n_rays.value);
+            game.configAI(numRay, numLayer, numNeuron);
+        }
+
         // same as $('document').ready(function(){});
         document.addEventListener("DOMContentLoaded", function () {
             game = new Game();
-            game.initGame();
+            game.play(false, false);
             // game.evolution();
+
+            // update nn structure
+            const n_rays = document.getElementById('n_rays');
+            n_rays.addEventListener("change", ()=>{
+                updateAi();
+                game.play(false, false);
+            });
+
+            const n_layers = document.getElementById('n_layers');
+            n_layers.addEventListener("change", ()=>{
+                updateAi();
+                game.play(false, false);
+            });
+            
+            const n_neurons = document.getElementById('n_neurons');
+            n_neurons.addEventListener("change", ()=>{
+                updateAi();
+                game.play(false, false);
+            });
         });
     </script>
 </head>
 <body>
-    <canvas id="carCanvas"></canvas>
-    <div class="verticalBtn">
-        <button id="restart-btn" onclick="javascript: restartGame('evolution')">Start Evolution</button>
-        <button id="restart-btn" onclick="javascript: restartGame('play')">Play</button>
-        <button id="restart-btn" onclick="javascript: restartGame('REC')">REC Play</button>
-        <button id="restart-btn" onclick="javascript: trainMyStyle()">Train My Style</button>
+    <div class="left-nav">
+        <div class="options">
+            <label for="n_rays">Number of detectors:</label>
+            <select name="n_rays" id="n_rays">
+                <option value=5 selected>5</option>
+                <option value=7>7</option>
+                <option value=9>9</option>
+            </select>
+            <label for="n_layers">Number of hidden layers:</label>
+            <select name="n_layers" id="n_layers">
+                <option value=1>1</option>
+                <option value=2 selected>2</option>
+                <option value=3>3</option>
+                <option value=4>4</option>
+            </select>
+            <label for="n_neurons">Number of neurons in each layer:</label>
+            <select name="n_neurons" id="n_neurons">
+                <option value=1>1</option>
+                <option value=2>2</option>
+                <option value=3>3</option>
+                <option value=4>4</option>
+                <option value=5>5</option>
+                <option value=6>6</option>
+                <option value=7>7</option>
+                <option value=8 selected>8</option>
+            </select>
+        </div>
+
+        <div class="btn">
+            <button id="restart-btn" onclick="javascript: restartGame('evolution')">Start Evolution</button>
+            <button id="restart-btn" onclick="javascript: restartGame('play')">Play</button>
+            <!-- <button id="restart-btn" onclick="javascript: restartGame('REC')">REC Play</button>
+            <button id="restart-btn" onclick="javascript: trainMyStyle()">Train My Style</button> -->
+        </div>
     </div>
-    <canvas id="nnCanvas"></canvas>
-    <div id="evo-chart">
-        <canvas id="evolution"  width="500" height="250"></canvas>
+
+    <div id="mainScreen">
+        <canvas id="carCanvas"></canvas>
+        <canvas id="nnCanvas"></canvas>
+    </div>
+    <div id="charts">
+        <div id="evo-chart">
+            <canvas id="evolution"  width="500" height="250"></canvas>
+        </div>
+        <div id="gen-chart">
+            <canvas id="scoreDistribution"  width="500" height="250"></canvas>
+        </div>
     </div>
 </body>

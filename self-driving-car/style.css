@@ -8,9 +8,26 @@ body{
     align-items: center;
 }
 
-.verticalBtn{
+.left-nav{
     display: flex;
     flex-direction: column;
+    background-color: paleturquoise;
+    width: 200px;
+    height: 100vh;
+}
+
+.options{
+    display: flex;
+    flex-direction: column;
+    width: 80%;
+    margin: 20px auto;
+}
+
+.btn{
+    display: flex;
+    flex-direction: column;
+    width: 80%;
+    margin: 20px auto;
 }
 
 #carCanvas{
@@ -21,7 +38,7 @@ body{
     background: black;
 }
 
-#evo-chart {
+#evo-chart #gen-chart {
     width: 500;
     height: 300;
 }

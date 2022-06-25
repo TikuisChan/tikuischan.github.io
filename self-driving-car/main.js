@@ -1,5 +1,5 @@
 class Game {
-    constructor (mainCanvasWidth=200, nnCanvasWidth=400) {
+    constructor (mainCanvasWidth=200, nnCanvasWidth=400, config={}) {
         // define canvas
         this.mainCanvas = document.getElementById("carCanvas");
         this.mainCanvas.width = mainCanvasWidth;
@@ -9,9 +9,26 @@ class Game {
         this.nnCanvas.width = nnCanvasWidth;
         this.nnCtx = this.nnCanvas.getContext("2d");
 
-        // chart.js setting
-        this.chartCanvas = document.getElementById('evolution');
+        this.initChart();
 
+        this.ai = true;
+        this.generation = 0;
+        this.NUM_TEST_ROUND = 0;
+        this.numTestRound = this.NUM_TEST_ROUND;
+        this.traffic = [];
+        this.playMode = "record";
+
+        this.aiConfig = {
+            numRay: 5,
+            hiddenLayer: [8, 8],
+        };
+
+        this.start;
+    }
+
+    initChart () {
+        // init chart.js
+        this.chartCanvas = document.getElementById('evolution');
         this.data = {
             labels: [],
             datasets: [{
@@ -47,54 +64,48 @@ class Game {
                 }
             }
         };
-
-        this.ai = true;
-        this.generation = 0;
-        this.NUM_TEST_ROUND = 0;
-        this.numTestRound = this.NUM_TEST_ROUND;
-
-        this.playMode = "record";
-        this.start;
     }
 
-    initGame (numTraffic=7) {
+    initGame (traffic=true) {
         // create road
         this.road = new Road(carCanvas.width / 2, carCanvas.width * 0.9);
 
         // create traffic on the road
-        // 1. by random[very hard, very generalize, final goal]
-        // this.traffic = [new Car(this.road.getLaneCenter(1), -350, 30, 50, "DUMMY")];
-        // for (let i = 0; i < numTraffic; i++) {
-        //     let dummyY;
-        //     if (Math.random() > 0.3) {
-        //         dummyY = - (i+1) * 200;
-        //     } else {
-        //         dummyY = - (i+1) * 240;
-        //     }
-        //     const lane = getRandomInt(3);
-        //     this.traffic.push(
-        //         new Car(this.road.getLaneCenter(lane), dummyY, 30, 50, "DUMMY")
-        //     );
-        // }
+        if (traffic) {
+            // 1. by random[very hard, very generalize, final goal]
+            // this.traffic = [new Car(this.road.getLaneCenter(1), -350, 30, 50, "DUMMY")];
+            // for (let i = 0; i < numTraffic; i++) {
+            //     let dummyY;
+            //     if (Math.random() > 0.3) {
+            //         dummyY = - (i+1) * 200;
+            //     } else {
+            //         dummyY = - (i+1) * 240;
+            //     }
+            //     const lane = getRandomInt(3);
+            //     this.traffic.push(
+            //         new Car(this.road.getLaneCenter(lane), dummyY, 30, 50, "DUMMY")
+            //     );
+            // }
 
-        // 2. Three layers of cars, fixed pattern [easiest, easily overfit and remember the pattern]
-        // 1st layer: 1 car at the middle
-        this.traffic = [new Car(this.road.getLaneCenter(1), -200, 30, 50, "DUMMY")];
-        // 2nd layer: hole at the middle
-        this.traffic.push(new Car(this.road.getLaneCenter(0), -400, 30, 50, "DUMMY"));
-        this.traffic.push(new Car(this.road.getLaneCenter(2), -400, 30, 50, "DUMMY"));
-        // 3rd layer: hole at the right
-        this.traffic.push(new Car(this.road.getLaneCenter(0), -600, 30, 50, "DUMMY"));
-        this.traffic.push(new Car(this.road.getLaneCenter(1), -600, 30, 50, "DUMMY"));
-        // 4rd layer: hole at the left
-        this.traffic.push(new Car(this.road.getLaneCenter(2), -800, 30, 50, "DUMMY"));
-        this.traffic.push(new Car(this.road.getLaneCenter(1), -800, 30, 50, "DUMMY"));
+            // 2. Three layers of cars, fixed pattern [easiest, easily overfit and remember the pattern]
+            // 1st layer: 1 car at the middle
+            this.traffic = [new Car(this.road.getLaneCenter(1), -200, 30, 50, "DUMMY")];
+            // 2nd layer: hole at the middle
+            this.traffic.push(new Car(this.road.getLaneCenter(0), -400, 30, 50, "DUMMY"));
+            this.traffic.push(new Car(this.road.getLaneCenter(2), -400, 30, 50, "DUMMY"));
+            // 3rd layer: hole at the right
+            this.traffic.push(new Car(this.road.getLaneCenter(0), -600, 30, 50, "DUMMY"));
+            this.traffic.push(new Car(this.road.getLaneCenter(1), -600, 30, 50, "DUMMY"));
+            // 4rd layer: hole at the left
+            this.traffic.push(new Car(this.road.getLaneCenter(2), -800, 30, 50, "DUMMY"));
+            this.traffic.push(new Car(this.road.getLaneCenter(1), -800, 30, 50, "DUMMY"));
+        }
     }
 
-    initCars () {
+    initAiCars () {
         this.cars= [];
         for (let i=0; i<500; i++){
-            this.cars.push(new Car(this.road.getLaneCenter(1), 0, 30, 50, "AI"));
+            this.cars.push(new Car(this.road.getLaneCenter(1), 0, 30, 50, "AI", this.aiConfig.numRay, this.aiConfig.hiddenLayer));
         }
     }
 
@@ -162,6 +173,7 @@ class Game {
         2. steps between gens => no change, reset car pos only
         3. not 1st gen with surviors => create ai cars base on surviors
         */
+        this.ai = true;
         if (this.survivors) {
             // TODO: separate to a evolve method
             this.cars = []
@@ -170,7 +182,7 @@ class Game {
             });
             this.survivors.forEach(parent => {
                 for (let i=0; i<100; i++){
-                    const child = new Car(this.road.getLaneCenter(1), 0, 30, 50, "AI");
+                    const child = new Car(this.road.getLaneCenter(1), 0, 30, 50, "AI", this.aiConfig.numRay, this.aiConfig.hiddenLayer);
                     child.ai = new FC(parent.ai, i > 0);
                     this.cars.push(child);
                 }
@@ -180,7 +192,7 @@ class Game {
                 car.resetPos(this.road.getLaneCenter(1), false);
             });
         } else {
-            this.initCars();
+            this.initAiCars();
         }
 
         let startTime;
@@ -232,22 +244,17 @@ class Game {
     }
 
     // manual play
-    play (record=false) {
+    play (record=false, traffic=true) {
         if (this.requestID) {
             cancelAnimationFrame(this.requestID);
             this.mainCtx.clearRect(0, 0, this.mainCanvas.width, window.innerHeight);
         }
         this.record = record;
 
-        let numTraffic = 7;
-        if (record) {
-            // increase traffic to tragger more different data;
-            numTraffic = 12;
-        }
-        this.initGame(numTraffic);
+        this.initGame(traffic);
         this.ai = false;
         this.start = this.animate;
-        this.cars = [new Car(this.road.getLaneCenter(1), 0, 30, 50, "KEY", 5)];
+        this.cars = [new Car(this.road.getLaneCenter(1), 0, 30, 50, "KEY", this.aiConfig.numRay, this.aiConfig.hiddenLayer)];
 
         // add ai cars
         const trainedAi = window.localStorage.getItem('myStyle');
@@ -255,16 +262,23 @@ class Game {
             let mySytle = new Car(this.road.getLaneCenter(1), 0, 30, 50, "AI");
             mySytle.ai = new FC(JSON.parse(trainedAi));
             this.cars.push(mySytle);
-
-            // for (let i=0; i<100; i++){
-            //     this.cars.push(new Car(this.road.getLaneCenter(1), 0, 30, 50, "AI"));
-            // }
         }
         this.start();
+    }
+
+    configAI (numRay, numLayer, numNeuron) {
+        let hiddenLayer = [];
+        for (let i=0; i < numLayer; i++) {
+            hiddenLayer.push(numNeuron);
+        }
+        this.aiConfig = {
+            numRay: numRay,
+            hiddenLayer: hiddenLayer
+        };
     }
 
     getScore (car, time) {
         // return (car.y / 100) + Math.log(time);
         return (-car.y / 100);
     }
-}
+ }
