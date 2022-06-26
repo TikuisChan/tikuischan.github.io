@@ -23,6 +23,12 @@ class Game {
             hiddenLayer: [8, 8],
         };
 
+        this.evoConfig = {
+            mutation: true,
+            mutationRate: 0.05,
+            crossover: false
+        }
+
         this.start;
     }
 
@@ -184,6 +190,9 @@ class Game {
                 for (let i=0; i<100; i++){
                     const child = new Car(this.road.getLaneCenter(1), 0, 30, 50, "AI", this.aiConfig.numRay, this.aiConfig.hiddenLayer);
                     child.ai = new FC(parent.ai, i > 0);
+                    if (this.evoConfig.mutation) {
+                        child.ai.mutate(this.evoConfig.mutationRate);
+                    }
                     this.cars.push(child);
                 }
             })
@@ -275,6 +284,12 @@ class Game {
             numRay: numRay,
             hiddenLayer: hiddenLayer
         };
+    }
+
+    configEvo (mutation, crossover) {
+        this.evoConfig.mutation = mutation;
+        this.evoConfig.crossover = crossover;
+        
     }
 
     getScore (car, time) {

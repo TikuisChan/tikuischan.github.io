@@ -1,5 +1,5 @@
 class FC {
-    constructor (structure, mutate=false) {
+    constructor (structure) {
         this.model = [];
         if (structure instanceof Array) {
             // define a new model by array
@@ -23,9 +23,6 @@ class FC {
                 }
                 this.model.push(newLayer);
             });
-            if (mutate) {
-                this.mutate();
-            }
         }
     }
 

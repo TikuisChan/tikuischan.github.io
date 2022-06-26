@@ -16,8 +16,6 @@
         /* TODO:
         > UI
             1. evolution options
-                - num layer
-                - num neurons in each layer
                 - mutation -> mutation rate
                 - crossover
                 - selection method -> top 5
@@ -82,6 +80,7 @@
                 case "evolution":
                     game = new Game();
                     updateAi();
+                    updateEvolution();
                     game.evoChart = new Chart(
                         game.chartCanvas,
                         game.config,
@@ -107,6 +106,12 @@
             const numLayer = parseInt(n_layers.value);
             const numRay = parseInt(n_rays.value);
             game.configAI(numRay, numLayer, numNeuron);
+        }
+
+        function updateEvolution () {
+            const useMutation = document.getElementById('mutation').checked;
+            const useCrossover = document.getElementById('crossover').checked;
+            game.configEvo(useMutation, useCrossover);
         }
 
         // same as $('document').ready(function(){});
@@ -139,12 +144,14 @@
 <body>
     <div class="left-nav">
         <div class="options">
+            <h3>Car setting</h3>
             <label for="n_rays">Number of detectors:</label>
             <select name="n_rays" id="n_rays">
                 <option value=5 selected>5</option>
                 <option value=7>7</option>
                 <option value=9>9</option>
             </select>
+            <h3>NN setting</h3>
             <label for="n_layers">Number of hidden layers:</label>
             <select name="n_layers" id="n_layers">
                 <option value=1>1</option>
@@ -163,6 +170,15 @@
                 <option value=7>7</option>
                 <option value=8 selected>8</option>
             </select>
+            <h3>Evolution Setting</h3>
+            <span>
+                <label for="mutation">Mutation</label>
+                <input type="checkbox" id="mutation" name="mutation" checked />
+            </span>
+            <!-- <span>
+                <label for="crossover">Crossover</label>
+                <input type="checkbox" id="crossover" name="crossover" />
+            </span> -->
         </div>
 
         <div class="btn">

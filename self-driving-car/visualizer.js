@@ -60,7 +60,11 @@ class Visualizer {
             ctx.fill();            
             ctx.beginPath();
             ctx.arc(x, top, nodeRadius * 0.6, 0, Math.PI *2);
-            ctx.fillStyle = getRGBA(layer.predict[i]);
+            if (outputLabel[i]) {
+                ctx.fillStyle = getRGBA(layer.predict[i] > 0.5);
+            } else {
+                ctx.fillStyle = getRGBA(layer.predict[i]);
+            }
             ctx.fill();
 
             ctx.beginPath()

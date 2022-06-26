@@ -12,7 +12,7 @@ body{
     display: flex;
     flex-direction: column;
     background-color: paleturquoise;
-    width: 200px;
+    width: 250px;
     height: 100vh;
 }
 
@@ -21,6 +21,7 @@ body{
     flex-direction: column;
     width: 80%;
     margin: 20px auto;
+    text-align: left;
 }
 
 .btn{
